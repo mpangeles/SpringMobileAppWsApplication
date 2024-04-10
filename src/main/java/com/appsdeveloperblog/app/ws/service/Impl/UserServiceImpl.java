@@ -1,20 +1,20 @@
 package com.appsdeveloperblog.app.ws.service.Impl;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.appsdeveloperblog.app.ws.UserRepository;
 import com.appsdeveloperblog.app.ws.io.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.service.UserService;
 import com.appsdeveloperblog.app.ws.shared.Utils;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDto;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import  com.appsdeveloperblog.app.ws.UserRepository;
-
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -51,7 +51,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		return null;
+		UserEntity userEntity= userRepository.findByEmail(username);
+		if(userEntity==null) throw new UsernameNotFoundException(username);
+		
+		return new User(username, userEntity.getEncryptedpassword(),new ArrayList<>());
 	}
 
 }
